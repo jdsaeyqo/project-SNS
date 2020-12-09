@@ -13,13 +13,13 @@ import com.bumptech.glide.Glide.init
 import com.example.snsproject.R
 import com.example.snsproject.navigation.model.ContentDTO
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 import kotlinx.android.synthetic.main.item_detail.view.*
 
 class DetailViewFragment :Fragment() {
 
     var firestore: FirebaseFirestore? = null
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,14 +35,14 @@ class DetailViewFragment :Fragment() {
     }
 
     inner class DetailViewRecyclerViewAdapter :
-        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        RecyclerView.Adapter<DetailViewRecyclerViewAdapter.CustomViewHolder>() {
 
         var contentDTOs: ArrayList<ContentDTO> = arrayListOf()
         var contentUidList: ArrayList<String> = arrayListOf()
 
 
         init {
-            firestore?.collection("images")?.orderBy("timestamp")
+            firestore?.collection("images")?.orderBy("timestamp",Query.Direction.DESCENDING)
                 ?.addSnapshotListener { value, error ->
                     contentDTOs.clear()
                     contentUidList.clear()
@@ -55,8 +55,7 @@ class DetailViewFragment :Fragment() {
                 }
         }
 
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
             val view =
                 LayoutInflater.from(parent.context).inflate(R.layout.item_detail, parent, false)
             return CustomViewHolder(view)
@@ -69,8 +68,8 @@ class DetailViewFragment :Fragment() {
             return contentDTOs.size
         }
 
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            val viewHolder = (holder as CustomViewHolder).itemView
+        override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
+            val viewHolder = holder.itemView
 
             //UserId
             viewHolder.detailviewitem_profile_textview.text = contentDTOs!![position].userId
