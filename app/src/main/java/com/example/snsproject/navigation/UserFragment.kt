@@ -168,17 +168,19 @@ class UserFragment :Fragment(){
         }
     }
 
-    fun getProfileImage(){
-        firestore?.collection("profileImages")?.document(uid!!)?.addSnapshotListener { value, error ->
-            if(value == null) return@addSnapshotListener
-
-            if(value.data != null){
-                var url = value?.data!!["image"]
-                Glide.with(activity!!).load(url).apply(RequestOptions().circleCrop()).into(fragmentView?.account_iv_profile!!)
+    fun getProfileImage() {
+        firestore?.collection("profileImages")?.document(uid!!)
+            ?.addSnapshotListener { value, error ->
+                if (value == null) return@addSnapshotListener
+                else {
+                    if (value.data != null) {
+                        var url = value?.data!!["image"]
+                        Glide.with(activity!!).load(url).apply(RequestOptions().circleCrop())
+                            .into(fragmentView?.account_iv_profile!!)
+                    }
+                }
             }
-        }
     }
-
 
     inner class UserFragmentRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 

@@ -1,5 +1,6 @@
 package com.example.snsproject.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,12 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.example.snsproject.R
 import com.example.snsproject.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_detail.view.*
+import kotlinx.android.synthetic.main.fragment_user.view.*
 import kotlinx.android.synthetic.main.item_detail.view.*
 
 class DetailViewFragment : Fragment() {
@@ -88,10 +91,21 @@ class DetailViewFragment : Fragment() {
             viewHolder.detailviewitem_favorite_counter_textview.text =
                 "Likes : " + contentDTOs!![position].favoriteCount
 
+            //오류 발생중
             //ProfileImage
-            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUri)
-                .into(viewHolder.detailviewitem_profile_image)
-
+//            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUri)
+//                .into(viewHolder.detailviewitem_profile_image)
+            firestore?.collection("profileImages")?.document(uid!!)
+                ?.addSnapshotListener { value, error ->
+                    if (value == null) return@addSnapshotListener
+                    else {
+                        if (value.data != null) {
+                            var url = value?.data!!["image"]
+                            Glide.with(holder.itemView.context).load(url).apply(RequestOptions().circleCrop())
+                                .into(viewHolder.detailviewitem_profile_image)
+                        }
+                    }
+                }
             //좋아요 버튼 클릭 시
             viewHolder.detailviewitem_favorite_imageview.setOnClickListener {
                 favoriteEvent(position)
@@ -116,6 +130,11 @@ class DetailViewFragment : Fragment() {
                 fragment.arguments = bundle
                 activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content,fragment)?.commit()
 
+            }
+            viewHolder.detailviewitem_comment_imageview.setOnClickListener {
+                var intent = Intent(it.context,CommentActivity::class.java)
+                intent.putExtra("contentUid",contentUidList[position])
+                startActivity(intent)
             }
 
         }

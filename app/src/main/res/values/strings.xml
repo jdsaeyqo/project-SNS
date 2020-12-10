@@ -2,8 +2,7 @@
 
 <resources>
 
-    <string name="app_name">Howlstagram</string>
-
+    <string name="app_name">그오맻</string>
     <string name="facebook_app_id">712766933002502</string>
 
     <string name="fb_login_protocol_scheme">fb712766933002502</string>
