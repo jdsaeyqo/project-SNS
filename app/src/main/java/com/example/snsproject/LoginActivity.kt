@@ -66,10 +66,10 @@ class LoginActivity : AppCompatActivity() {
         callbackManager = CallbackManager.Factory.create()
     }
 
-    override fun onStart() {
-        super.onStart()
-        moveMainPage(auth?.currentUser)
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        moveMainPage(auth?.currentUser)
+//    }
 
     //Facebook로그인 Hash값 받아오기
 //    fun printHashKey() {
@@ -158,20 +158,25 @@ class LoginActivity : AppCompatActivity() {
 
 
     fun sigininAndSignup() {
-        auth?.createUserWithEmailAndPassword(
-            email_edittext.text.toString(),
-            password_edittext.text.toString()
-        )?.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                //계정 생성
-                Toast.makeText(this, "회원가입이 완료되었습니다", Toast.LENGTH_LONG).show()
+        if(email_edittext.text.toString().isEmpty() ||password_edittext.text.toString().isEmpty()){
+            Toast.makeText(this,"작성을 완료해주세요",Toast.LENGTH_LONG).show()
+        }
+        else {
+            auth?.createUserWithEmailAndPassword(
+                email_edittext.text.toString(),
+                password_edittext.text.toString()
+            )?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    //계정 생성
+                    Toast.makeText(this, "회원가입이 완료되었습니다", Toast.LENGTH_LONG).show()
 
-            } else if (task.exception?.message.isNullOrEmpty()) {
-                //에러 메시지 출력
-                Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
-            } else {
-                //계정 있을 시 로그인 화면으로
-                signinEmail()
+                } else if (task.exception?.message.isNullOrEmpty()) {
+                    //에러 메시지 출력
+                    Toast.makeText(this, task.exception?.message, Toast.LENGTH_LONG).show()
+                } else {
+                    //계정 있을 시 로그인 화면으로
+                    signinEmail()
+                }
             }
         }
     }
