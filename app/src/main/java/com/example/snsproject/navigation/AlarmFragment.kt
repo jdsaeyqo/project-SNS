@@ -78,6 +78,8 @@ class AlarmFragment :Fragment(){
 //                        .into(view!!.commentviewitem_imageview_profile)
 //                }
 //            }
+
+            //알람 리스트 프로필 사진 반영 제대로 안됨.
             var firestore = FirebaseFirestore.getInstance()
             var uid = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -112,7 +114,6 @@ class AlarmFragment :Fragment(){
                 }
 
             }
-
 
 
             var view = holder.itemView
