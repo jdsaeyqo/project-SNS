@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.snsproject.R
+import com.example.snsproject.navigation.model.AlarmDTO
 import com.example.snsproject.navigation.model.ContentDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -91,7 +92,7 @@ class DetailViewFragment : Fragment() {
             viewHolder.detailviewitem_favorite_counter_textview.text =
                 "Likes : " + contentDTOs!![position].favoriteCount
 
-            //오류 발생중
+
             //ProfileImage
             val pf = firestore?.collection("profileImages")
             if (uid == contentDTOs!![position].uid) {
@@ -100,7 +101,7 @@ class DetailViewFragment : Fragment() {
                     else {
                         if (value.data != null) {
                             var url = value?.data!!["image"]
-                            if((holder.itemView.context as Activity).isFinishing) return@addSnapshotListener
+                            if ((holder.itemView.context as Activity).isFinishing) return@addSnapshotListener
 
                             Glide.with(holder.itemView.context as Activity).load(url)
                                 .apply(RequestOptions().circleCrop())
@@ -108,15 +109,15 @@ class DetailViewFragment : Fragment() {
                         }
                     }
                 }
-            }else{
+            } else {
                 pf?.document(contentDTOs!![position].uid!!)?.addSnapshotListener { value, error ->
                     if (value == null) return@addSnapshotListener
                     else {
                         if (value.data != null) {
                             var url = value?.data!!["image"]
-                            if((holder.itemView.context as Activity).isFinishing) return@addSnapshotListener
+                            if ((holder.itemView.context as Activity).isFinishing) return@addSnapshotListener
 
-                                Glide.with(holder.itemView.context as Activity).load(url)
+                            Glide.with(holder.itemView.context as Activity).load(url)
                                 .apply(RequestOptions().circleCrop())
                                 .into(viewHolder.detailviewitem_profile_image)
                         }
@@ -126,19 +127,6 @@ class DetailViewFragment : Fragment() {
             }
 
 
-            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUri)
-                .into(viewHolder.detailviewitem_profile_image)
-//            firestore?.collection("profileImages")?.document(uid!!)
-//                ?.addSnapshotListener { value, error ->
-//                    if (value == null) return@addSnapshotListener
-//                    else {
-//                        if (value.data != null) {
-//                            var url = value?.data!!["image"]
-//                            Glide.with(holder.itemView.context).load(url).apply(RequestOptions().circleCrop())
-//                                .into(viewHolder.detailviewitem_profile_image)
-//                        }
-//                    }
-//                }
             //좋아요 버튼 클릭 시
             viewHolder.detailviewitem_favorite_imageview.setOnClickListener {
                 favoriteEvent(position)
@@ -168,10 +156,12 @@ class DetailViewFragment : Fragment() {
             viewHolder.detailviewitem_comment_imageview.setOnClickListener {
                 var intent = Intent(it.context, CommentActivity::class.java)
                 intent.putExtra("contentUid", contentUidList[position])
+                intent.putExtra("destinationUid", contentDTOs[position].uid)
                 startActivity(intent)
             }
 
         }
+
 
         fun favoriteEvent(position: Int) {
             var tsDoc = firestore?.collection("images")?.document(contentUidList[position])
@@ -189,10 +179,24 @@ class DetailViewFragment : Fragment() {
                     //버튼 클릭 안 되어 있을 때
                     contentDTO?.favoriteCount = contentDTO?.favoriteCount + 1
                     contentDTO?.favorites[uid!!] = true
+                    favoriteAlarm(contentDTOs[position].uid!!)
 
                 }
                 transaction.set(tsDoc, contentDTO)
             }
+        }
+
+        fun favoriteAlarm(destinationUid: String) {
+
+            var alarmDTO = AlarmDTO()
+            alarmDTO.destinationUid = destinationUid
+            alarmDTO.userId = FirebaseAuth.getInstance().currentUser?.email
+            alarmDTO.uid = FirebaseAuth.getInstance().currentUser?.uid
+            alarmDTO.kind = 0
+            alarmDTO.timestamp = System.currentTimeMillis()
+
+            FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
         }
     }
 

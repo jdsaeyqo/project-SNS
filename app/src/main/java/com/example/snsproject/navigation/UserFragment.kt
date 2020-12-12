@@ -17,6 +17,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.snsproject.LoginActivity
 import com.example.snsproject.MainActivity
 import com.example.snsproject.R
+import com.example.snsproject.navigation.model.AlarmDTO
 import com.example.snsproject.navigation.model.ContentDTO
 import com.example.snsproject.navigation.model.FollowDTO
 import com.google.firebase.auth.FirebaseAuth
@@ -152,6 +153,7 @@ class UserFragment :Fragment(){
                 followDTO = FollowDTO()
                 followDTO!!.followerCount = 1
                 followDTO!!.followers[currentUserUid!!] = true
+                followAlarm(uid!!)
 
                 it.set(tsDocFollower,followDTO!!)
                 return@runTransaction
@@ -162,6 +164,7 @@ class UserFragment :Fragment(){
             }else{
                 followDTO!!.followerCount = followDTO!!.followerCount + 1
                 followDTO!!.followers[currentUserUid!!] = true
+                followAlarm(uid!!)
 
             }
             it.set(tsDocFollower,followDTO!!)
@@ -169,6 +172,16 @@ class UserFragment :Fragment(){
         }
     }
 
+    fun followAlarm(destinationUid : String){
+        var alarmDTO = AlarmDTO()
+        alarmDTO.destinationUid = destinationUid
+        alarmDTO.userId = auth?.currentUser?.email
+        alarmDTO.uid = auth?.currentUser?.uid
+        alarmDTO.kind = 2
+        alarmDTO.timestamp = System.currentTimeMillis()
+        FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
+    }
 
     fun getProfileImage() {
         firestore!!.collection("profileImages").document(uid!!)
@@ -177,7 +190,7 @@ class UserFragment :Fragment(){
                 else {
                     if (value.data != null) {
                         val url = value.data!!["image"]
-
+                        if(activity!!.isFinishing) return@addSnapshotListener
 
                         Glide.with(activity!!).load(url!!).apply(RequestOptions().circleCrop())
                             .into(fragmentView!!.account_iv_profile!!)
