@@ -1,6 +1,7 @@
 package com.example.snsproject.navigation.model
 
 data class ContentDTO(
+
     var explain: String? = null,
     var imageUri: String? = null,
     var uid: String? = null,

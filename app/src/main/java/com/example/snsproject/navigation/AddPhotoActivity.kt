@@ -19,6 +19,8 @@ import java.util.*
 
 class AddPhotoActivity : AppCompatActivity() {
 
+
+
     var PICK_IMAGE_FROM_ALBUM = 0
     var storage: FirebaseStorage? = null
     var photoUri: Uri? = null
@@ -47,14 +49,15 @@ class AddPhotoActivity : AppCompatActivity() {
     }
 
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == PICK_IMAGE_FROM_ALBUM){
             if(resultCode == Activity.RESULT_OK){
+
                 //선택된 이미지 경로
                 photoUri = data?.data
                 addphoto_image.setImageURI(photoUri)
+
 
             }else{
                 //선택하지 않고 앨범 나갔을 때

@@ -1,5 +1,6 @@
 package com.example.snsproject.navigation
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,13 +17,12 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.android.synthetic.main.fragment_detail.view.*
-import kotlinx.android.synthetic.main.fragment_user.view.*
 import kotlinx.android.synthetic.main.item_detail.view.*
 
 class DetailViewFragment : Fragment() {
 
     var firestore: FirebaseFirestore? = null
-    var uid : String? = null
+    var uid: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,7 +51,7 @@ class DetailViewFragment : Fragment() {
                 ?.addSnapshotListener { value, error ->
                     contentDTOs.clear()
                     contentUidList.clear()
-                    if(value == null) return@addSnapshotListener
+                    if (value == null) return@addSnapshotListener
                     for (snapshot in value!!.documents) {
                         val item = snapshot.toObject(ContentDTO::class.java)
                         contentDTOs.add(item!!)
@@ -93,30 +93,63 @@ class DetailViewFragment : Fragment() {
 
             //오류 발생중
             //ProfileImage
-//            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUri)
-//                .into(viewHolder.detailviewitem_profile_image)
-            firestore?.collection("profileImages")?.document(uid!!)
-                ?.addSnapshotListener { value, error ->
+            val pf = firestore?.collection("profileImages")
+            if (uid == contentDTOs!![position].uid) {
+                pf?.document(uid!!)?.addSnapshotListener { value, error ->
                     if (value == null) return@addSnapshotListener
                     else {
                         if (value.data != null) {
                             var url = value?.data!!["image"]
-                            Glide.with(holder.itemView.context).load(url).apply(RequestOptions().circleCrop())
+                            if((holder.itemView.context as Activity).isFinishing) return@addSnapshotListener
+
+                            Glide.with(holder.itemView.context as Activity).load(url)
+                                .apply(RequestOptions().circleCrop())
                                 .into(viewHolder.detailviewitem_profile_image)
                         }
                     }
                 }
+            }else{
+                pf?.document(contentDTOs!![position].uid!!)?.addSnapshotListener { value, error ->
+                    if (value == null) return@addSnapshotListener
+                    else {
+                        if (value.data != null) {
+                            var url = value?.data!!["image"]
+                            if((holder.itemView.context as Activity).isFinishing) return@addSnapshotListener
+
+                                Glide.with(holder.itemView.context as Activity).load(url)
+                                .apply(RequestOptions().circleCrop())
+                                .into(viewHolder.detailviewitem_profile_image)
+                        }
+                    }
+                }
+
+            }
+
+
+            Glide.with(holder.itemView.context).load(contentDTOs!![position].imageUri)
+                .into(viewHolder.detailviewitem_profile_image)
+//            firestore?.collection("profileImages")?.document(uid!!)
+//                ?.addSnapshotListener { value, error ->
+//                    if (value == null) return@addSnapshotListener
+//                    else {
+//                        if (value.data != null) {
+//                            var url = value?.data!!["image"]
+//                            Glide.with(holder.itemView.context).load(url).apply(RequestOptions().circleCrop())
+//                                .into(viewHolder.detailviewitem_profile_image)
+//                        }
+//                    }
+//                }
             //좋아요 버튼 클릭 시
             viewHolder.detailviewitem_favorite_imageview.setOnClickListener {
                 favoriteEvent(position)
             }
             //좋아요 하트 리스너
 
-            if(contentDTOs!![position].favorites.containsKey(uid)){
+            if (contentDTOs!![position].favorites.containsKey(uid)) {
                 //좋아요 활성화상태
                 viewHolder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite)
 
-            }else{
+            } else {
                 //좋아요 비활성화 상태
                 viewHolder.detailviewitem_favorite_imageview.setImageResource(R.drawable.ic_favorite_border)
 
@@ -125,15 +158,16 @@ class DetailViewFragment : Fragment() {
             viewHolder.detailviewitem_profile_image.setOnClickListener {
                 var fragment = UserFragment()
                 var bundle = Bundle()
-                bundle.putString("destinationUid",contentDTOs[position].uid)
-                bundle.putString("userId",contentDTOs[position].userId)
+                bundle.putString("destinationUid", contentDTOs[position].uid)
+                bundle.putString("userId", contentDTOs[position].userId)
                 fragment.arguments = bundle
-                activity?.supportFragmentManager?.beginTransaction()?.replace(R.id.main_content,fragment)?.commit()
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.main_content, fragment)?.commit()
 
             }
             viewHolder.detailviewitem_comment_imageview.setOnClickListener {
-                var intent = Intent(it.context,CommentActivity::class.java)
-                intent.putExtra("contentUid",contentUidList[position])
+                var intent = Intent(it.context, CommentActivity::class.java)
+                intent.putExtra("contentUid", contentUidList[position])
                 startActivity(intent)
             }
 
