@@ -1,5 +1,6 @@
 package com.example.snsproject.navigation.util
 
+import com.example.snsproject.R
 import com.example.snsproject.navigation.model.PushDTO
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson
@@ -9,7 +10,7 @@ import java.io.IOException
 class FcmPush {
     var JSON = MediaType.parse("application/json; charset=utf-8")
     var url = "https://fcm.googleapis.com/fcm/send"
-    var serverKey = "AAAAckNroDo:APA91bE1l65zSq0NdMSUxfRaKIhhaGM5Xr3vOfktQZcswgGmzER1m1zACWQrG43eQ5ToqSJ_7__u5rPFLdGhHE_wWwnVJ6Ubybv6Ce490a4KptFAymsbX3QtwbsmuJiN02JWPs7247Fi"
+    var serverKey = ""
     var gson: Gson? = null
     var okhttpClient: OkHttpClient? = null
 
