@@ -13,6 +13,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.snsproject.R
 import com.example.snsproject.navigation.model.AlarmDTO
 import com.example.snsproject.navigation.model.ContentDTO
+import com.example.snsproject.navigation.util.FcmPush
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_comment.*
@@ -58,6 +59,10 @@ class CommentActivity : AppCompatActivity() {
         alarmDTO.message = message
 
         FirebaseFirestore.getInstance().collection("alarms").document().set(alarmDTO)
+
+        var message = FirebaseAuth.getInstance().currentUser?.email + " " + getString(R.string.alarm_comment) + " : " + message
+        FcmPush.instance.sendMessage(destinationUid,"그오맻",message)
+
 
 
     }

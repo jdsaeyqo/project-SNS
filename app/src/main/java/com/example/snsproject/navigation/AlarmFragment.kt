@@ -54,7 +54,6 @@ class AlarmFragment :Fragment(){
         }
 
 
-
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
             var view = LayoutInflater.from(parent.context).inflate(R.layout.item_comment,parent,false)
 
@@ -68,52 +67,19 @@ class AlarmFragment :Fragment(){
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+//알람 리스트 프로필 사진 반영 제대로 안됨.
+            FirebaseFirestore.getInstance().collection("profileImages").document(alarmDTOList[position].uid!!).get().addOnCompleteListener {
+                if(it.isSuccessful){
+                    var url = it.result!!["image"]
 
-//            FirebaseFirestore.getInstance().collection("profileImages").document(alarmDTOList[position].uid!!).get().addOnCompleteListener {
-//                if(it.isSuccessful){
-//                    var url = it.result!!["image"]
-////                    if((view!!.context as Activity).isFinishing) return@addOnCompleteListener
-//                    Glide.with(view!!.context).load(url)
-//                        .apply(RequestOptions().circleCrop())
-//                        .into(view!!.commentviewitem_imageview_profile)
-//                }
-//            }
-
-            //알람 리스트 프로필 사진 반영 제대로 안됨.
-            var firestore = FirebaseFirestore.getInstance()
-            var uid = FirebaseAuth.getInstance().currentUser?.uid
-
-            val pf = firestore?.collection("profileImages")
-            if (uid == alarmDTOList!![position].uid) {
-                pf?.document(uid!!)?.addSnapshotListener { value, error ->
-                    if (value == null) return@addSnapshotListener
-                    else {
-                        if (value.data != null) {
-                            var url = value?.data!!["image"]
-                            if((holder.itemView.context as Activity).isFinishing) return@addSnapshotListener
-
-                            Glide.with(holder.itemView.context as Activity).load(url)
-                                .apply(RequestOptions().circleCrop())
-                                .into(view!!.commentviewitem_imageview_profile)
-                        }
-                    }
+                    if((view!!.context as Activity).isFinishing) return@addOnCompleteListener
+                    Glide.with(view!!.context).load(url)
+                        .apply(RequestOptions().circleCrop())
+                        .into(view!!.commentviewitem_imageview_profile)
                 }
-            }else{
-                pf?.document(alarmDTOList!![position].uid!!)?.addSnapshotListener { value, error ->
-                    if (value == null) return@addSnapshotListener
-                    else {
-                        if (value.data != null) {
-                            var url = value?.data!!["image"]
-                            if((holder.itemView.context as Activity).isFinishing) return@addSnapshotListener
-
-                            Glide.with(holder.itemView.context as Activity).load(url)
-                                .apply(RequestOptions().circleCrop())
-                                .into(view!!.commentviewitem_imageview_profile)
-                        }
-                    }
-                }
-
             }
+
+
 
 
             var view = holder.itemView
