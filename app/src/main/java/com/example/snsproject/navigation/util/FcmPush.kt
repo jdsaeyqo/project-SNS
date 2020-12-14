@@ -1,6 +1,5 @@
 package com.example.snsproject.navigation.util
 
-import com.example.snsproject.R
 import com.example.snsproject.navigation.model.PushDTO
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.Gson

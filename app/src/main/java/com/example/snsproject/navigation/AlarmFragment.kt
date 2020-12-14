@@ -15,10 +15,14 @@ import com.example.snsproject.navigation.model.AlarmDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_alarm.view.*
+import kotlinx.android.synthetic.main.item_comment.*
 import kotlinx.android.synthetic.main.item_comment.view.*
 import kotlinx.android.synthetic.main.item_detail.view.*
 
 class AlarmFragment :Fragment(){
+
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,20 +71,19 @@ class AlarmFragment :Fragment(){
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
 //알람 리스트 프로필 사진 반영 제대로 안됨.
-            FirebaseFirestore.getInstance().collection("profileImages").document(alarmDTOList[position].uid!!).get().addOnCompleteListener {
-                if(it.isSuccessful){
-                    var url = it.result!!["image"]
 
-                    if((view!!.context as Activity).isFinishing) return@addOnCompleteListener
-                    Glide.with(view!!.context).load(url)
-                        .apply(RequestOptions().circleCrop())
-                        .into(view!!.commentviewitem_imageview_profile)
+           FirebaseFirestore.getInstance().collection("profileImages").document(alarmDTOList[position].uid!!).get()
+               .addOnCompleteListener {
+                    if(it.isSuccessful){
+                        val url = it.result!!["image"]
+                        Glide.with(view!!.context).load(url)
+                            .apply(RequestOptions().circleCrop())
+                            .into(view!!.commentviewitem_imageview_profile)
+
+                    }
                 }
-            }
-
-
-
 
             var view = holder.itemView
 
