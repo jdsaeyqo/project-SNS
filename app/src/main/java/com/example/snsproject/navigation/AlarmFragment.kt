@@ -1,7 +1,7 @@
 package com.example.snsproject.navigation
 
-import android.app.Activity
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,22 +15,19 @@ import com.example.snsproject.navigation.model.AlarmDTO
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_alarm.view.*
-import kotlinx.android.synthetic.main.item_comment.*
 import kotlinx.android.synthetic.main.item_comment.view.*
-import kotlinx.android.synthetic.main.item_detail.view.*
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class AlarmFragment :Fragment(){
-
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-
 
         val view = LayoutInflater.from(activity).inflate(R.layout.fragment_alarm,container,false)
         view. alarmfragment_recyclerview.adapter = AlarmRecyclerviewAdapter()
@@ -43,7 +40,9 @@ class AlarmFragment :Fragment(){
         var alarmDTOList : ArrayList<AlarmDTO> = arrayListOf()
 
         init {
+
             var uid = FirebaseAuth.getInstance().currentUser?.uid
+
 
             FirebaseFirestore.getInstance().collection("alarms").
             whereEqualTo("destinationUid",uid).addSnapshotListener { value, error ->
@@ -72,33 +71,29 @@ class AlarmFragment :Fragment(){
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
-//알람 리스트 프로필 사진 반영 제대로 안됨.
-
-           FirebaseFirestore.getInstance().collection("profileImages").document(alarmDTOList[position].uid!!).get()
-               .addOnCompleteListener {
-                    if(it.isSuccessful){
-                        val url = it.result!!["image"]
-                        Glide.with(view!!.context).load(url)
-                            .apply(RequestOptions().circleCrop())
-                            .into(view!!.commentviewitem_imageview_profile)
-
-                    }
-                }
 
             var view = holder.itemView
+
+
+
 
             when(alarmDTOList[position].kind){
                 0 -> {
                     var str_0 = alarmDTOList[position].userId + " " + getString(R.string.alarm_favorite)
                     view.commentviewitem_textview_profile.text = str_0
+
                 }1 -> {
                     var str_0 = alarmDTOList[position].userId + " " + getString(R.string.alarm_comment) + " : " +alarmDTOList[position].message
 
                     view.commentviewitem_textview_profile.text = str_0
-                }2 -> {
+
+
+            }2 -> {
                     var str_0 = alarmDTOList[position].userId + " " + getString(R.string.alarm_follow)
                     view.commentviewitem_textview_profile.text = str_0
-                }
+
+
+            }
             }
             view.commentviewitem_textview_comment.visibility = View.INVISIBLE
 
