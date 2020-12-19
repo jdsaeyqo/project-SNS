@@ -4,17 +4,20 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFFFFF"
     android:orientation="vertical">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="100dp"
+        android:background="#FFFFFF">
 
         <ImageView
             android:id="@+id/account_iv_profile"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_alignParentLeft="true"
+            android:background="#FFFFFF"
             android:src="@drawable/ic_account" />
 
         <Button
@@ -22,15 +25,21 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_alignParentBottom="true"
+            android:layout_marginBottom="0dp"
             android:layout_toRightOf="@id/account_iv_profile"
-            android:text="@string/follow" />
+            android:background="@drawable/btn_icon"
+            android:text="@string/follow"
+            android:textColor="@color/design_default_color_secondary"
+
+            />
 
         <LinearLayout
-            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/account_btn_follow_signout"
-            android:layout_toRightOf="@+id/account_iv_profile">
+            android:layout_toRightOf="@+id/account_iv_profile"
+            android:background="#FFFFFF"
+            android:gravity="center">
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -96,6 +105,7 @@
         </LinearLayout>
 
     </RelativeLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/account_recyclerview"
         android:layout_width="match_parent"
