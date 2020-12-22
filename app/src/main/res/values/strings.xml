@@ -81,7 +81,7 @@
 
     <string name="upload_image">사진 업로드</string>
 
-    <string name="hint_image_content">Image description</string>
+    <string name="hint_image_content">내용</string>
 
     <string name="upload_success">Upload success</string>
 
