@@ -34,7 +34,7 @@
 하지만 minSdkVersion이 20이하 일 경우 멀티덱스 지원 라이브러리 추가, 혹은 21 이상으로 설정해야 함.  
 
 ---
-#Library
+# Library
 ~~~kotlin  
  //Firebase
    implementation 'com.google.firebase:firebase-auth:20.0.1'
