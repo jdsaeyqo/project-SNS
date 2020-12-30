@@ -36,6 +36,8 @@
 ---
 # Library
 ~~~kotlin  
+  apply plugin: 'com.google.gms.google-services'
+
  //Firebase
    implementation 'com.google.firebase:firebase-auth:20.0.1'
     implementation 'com.google.firebase:firebase-storage:19.2.1'
